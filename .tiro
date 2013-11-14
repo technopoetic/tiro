@@ -1,0 +1,12 @@
+[notes]
+home = Dropbox/Notes
+
+[compose]
+note_template = note_template.md
+journal_template = journal_template.md
+extension = .md
+editor = vim 
+
+[date]
+format = %Y-%m-%d
+
