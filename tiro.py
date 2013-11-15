@@ -52,7 +52,6 @@ def log(args):
 def note(args):
     print(args)
     type = 'note'
-    print "Opening cicero"
     cicero.new_note(type,args['--notebook'],args['<text>'])
 
 def open(args):
