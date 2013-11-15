@@ -1,2 +1,2 @@
-# $topic
+# $title
 :date: $today

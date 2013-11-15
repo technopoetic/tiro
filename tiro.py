@@ -2,20 +2,20 @@
 """Creates and manages markdown, file based note system.
 
 Usage: 
-    tiro journal [--folder=<folder>] [--editor=<editor>] [<text> ...]
-    tiro list [--max=<max>] [--files] <text> ...
+    tiro journal [--notebook=<notebook>] [--editor=<editor>] [<text> ...]
+    tiro list [--max=<max>] [--notebook=<notebook>] [--files] <text> ...
     tiro log <log> <comment> ...
-    tiro note [--folder=<folder>] [--editor=<editor>] [<text> ...]  
+    tiro note [--notebook=<notebook>] [--editor=<editor>] [<text> ...]  
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
     tiro summary [--max=<max>] 
 
 Options:
-    -e --editor=<editor>    Open files with the specified editor. [default: vim]
-    -f --files              Display raw file names when listing files.
-    -F --folder=<folder>    Place the new note into the given folder.
-    -h --help               Show this help.
-    --max=<max>             Maximum results to display. [default: 10]
-    --version               Show version.
+    -e --editor=<editor>      Open files with the specified editor. [default: vim]
+    -f --files                Display raw file names when listing files.
+    -h --help                 Show this help.
+    -n --notebook=<notebook>  Specify a specific notebook. [default: default]
+    --max=<max>               Maximum results to display. [default: 10]
+    --version                 Show version.
 
 Command descriptions:
     journal - open a new or existing file named journal.<today>.txt
@@ -44,15 +44,16 @@ def journal(args):
 
 def list(args):
     print(args)
-    cicero.list_notes_matching(args['<text>'])
+    cicero.list_notes_matching(args['--notebook'],args['<text>'])
 
 def log(args):
     print(args)
 
 def note(args):
     print(args)
+    type = 'note'
     print "Opening cicero"
-    cicero.new_note(args['<text>'])
+    cicero.new_note(type,args['--notebook'],args['<text>'])
 
 def open(args):
     print(args)

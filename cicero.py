@@ -9,11 +9,13 @@ import settings
 import tempfile, subprocess
 from string import Template
 
-def new_note(text):
+def new_note(type, notebook, text):
+    """ Build and open a new note in the specified (or default) notebook. """
     print "Note home is: " + settings.NOTE_HOME
     print "Note template is: " + settings.NOTE_TEMPLATE
     print "Journal template is: " + settings.JOURNAL_TEMPLATE
     print "Text args are: " + ' '.join(text)
+    print "Notebook is:  {0}".format(notebook)
 
     f = open(settings.NOTE_TEMPLATE, 'r')
     template_text = f.readlines()
@@ -23,7 +25,7 @@ def new_note(text):
     
     data = {}
     title = ' '.join(text)
-    if len(topic) == 0:
+    if len(title) == 0:
         print getOutput('cal')
         title = raw_input("Note Title? ")
 
@@ -56,11 +58,13 @@ def new_note(text):
     #     text = open(temp.name, 'r').read()
     # print "Your text was: \n" + text 
 
-def list_notes_matching(search_text):
-    output = subprocess.check_output(["grep", "-R","-l", ''.join(search_text), settings.NOTE_HOME])
+def list_notes_matching(notebook,search_text):
+    output = subprocess.check_output(["grep", "-R","-i", "-l", ''.join(search_text), settings.NOTE_HOME])
     print "Output of list is: " + output
     print "Type of output is: " 
+    outarray = output.split('\n')
     print type(output)
+    print outarray
 
 def getOutput(command):
         p1 = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE)
