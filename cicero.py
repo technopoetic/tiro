@@ -18,8 +18,8 @@ def new_note(notetype, notebook, text):
     print "Journal template is: " + settings.JOURNAL_TEMPLATE
     print "Text args are: " + ' '.join(text)
     print "Notebook is:  {0}".format(notebook)
-    filename, last, summary = template_init(notetype, settings.NOTE_HOME, text)
-    open_file(filename, line=last)
+    filename, last, summary = template_init(notetype, notebook, text)
+    open_file(filename, last)
     print summary
 
 def list_notes_matching(notebook,search_text):
@@ -35,13 +35,17 @@ def getOutput(command):
         output = p1.communicate()[0]
         return output
 
-def get_filename_for_title(topic, notes_dir=settings.NOTE_HOME):
-    if not os.path.exists(notes_dir):
-        os.mkdir(notes_dir)
+def get_filename_for_title(topic, notes_dir=None):
+    if notes_dir:
+        note_path = os.path.join(settings.NOTE_HOME, notes_dir)
+    else:
+        note_path = settings.NOTE_HOME
+    if not os.path.exists(note_path):
+        os.mkdir(note_path)
 
     topic_filename = string_to_file_name(topic)
 
-    filename = "%s/%s" %(notes_dir, topic_filename)
+    filename = "%s/%s" %(note_path, topic_filename)
 
     return filename
 
@@ -63,6 +67,13 @@ def open_file(filename,
         # subprocess.Popen([program, filename])
         # subprocess.Popen([editor, filename, "+%d" % (line + 2)])
 
+def get_title(text):
+    title = ' '.join(text)
+    if len(title) == 0:
+        print getOutput('cal')
+        title = raw_input("Note Title? ")
+    return title
+
 def template_init(note_type, notebook, text):
     f = open(template_map[note_type], 'r')
     template_text = f.readlines()
@@ -70,12 +81,12 @@ def template_init(note_type, notebook, text):
     template_text = ''.join(template_text)
     
     data = {}
-    title = ' '.join(text)
-    if len(title) == 0:
-        print getOutput('cal')
-        title = raw_input("Note Title? ")
+    title = get_title(text)
 
-    filename = get_filename_for_title(title, settings.NOTE_HOME)
+    if notebook != 'default':
+        filename = get_filename_for_title(title, notebook)
+    else:
+        filename = get_filename_for_title(title)
     today = datetime.date.today()
     today = today.strftime(settings.DATE_FORMAT)
     summary = "%s\nCreated %s" % (title, today)
