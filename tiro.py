@@ -3,7 +3,7 @@
 
 Usage: 
     tiro journal [--notebook=<notebook>] [--editor=<editor>] [<text> ...]
-    tiro list [--max=<max>] [--notebook=<notebook>] [--files] <text> ...
+    tiro list [--max=<max>] [--notebook=<notebook>] [--files] [<text> ...]
     tiro log <log> <comment> ...
     tiro note [--notebook=<notebook>] [--editor=<editor>] [<text> ...]  
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
@@ -12,7 +12,7 @@ Usage:
 Options:
     -e --editor=<editor>      Open files with the specified editor. [default: vim]
     -h --help                 Show this help.
-    -n --notebook=<notebook>  Specify a specific notebook. [default: default]
+    -n --notebook=<notebook>  Specify a specific notebook. [default: inbox]
     --max=<max>               Maximum results to display. [default: 10]
     --version                 Show version.
 
@@ -26,9 +26,7 @@ Command descriptions:
 
 """
 import os
-#import optparse
 import shutil
-#import random
 import datetime
 import sys
 import cicero

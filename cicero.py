@@ -83,10 +83,7 @@ def template_init(note_type, notebook, text):
     data = {}
     title = get_title(text)
 
-    if notebook:
-        filename = get_filename_for_title(title, notebook)
-    else:
-        filename = get_filename_for_title(title)
+    filename = get_filename_for_title(title, notebook)
     today = datetime.date.today()
     today = today.strftime(settings.DATE_FORMAT)
     summary = "%s\nCreated %s" % (title, today)
@@ -110,7 +107,10 @@ def search_notes(search_text,notebook=None):
         note_path = os.path.join(settings.NOTE_HOME, notebook)
     else:
         note_path = settings.NOTE_HOME
-    output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
+    if search_text:
+        output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
+    else:
+        output = subprocess.check_output(["ls", note_path])
     outarray = output.split('\n')
     return outarray
 
