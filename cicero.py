@@ -83,7 +83,7 @@ def template_init(note_type, notebook, text):
     data = {}
     title = get_title(text)
 
-    if notebook != 'default':
+    if notebook:
         filename = get_filename_for_title(title, notebook)
     else:
         filename = get_filename_for_title(title)
