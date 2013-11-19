@@ -11,7 +11,6 @@ Usage:
 
 Options:
     -e --editor=<editor>      Open files with the specified editor. [default: vim]
-    -f --files                Display raw file names when listing files.
     -h --help                 Show this help.
     -n --notebook=<notebook>  Specify a specific notebook. [default: default]
     --max=<max>               Maximum results to display. [default: 10]

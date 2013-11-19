@@ -23,7 +23,7 @@ def new_note(notetype, notebook, text):
     print summary
 
 def list_notes_matching(notebook,search_text):
-    output = search_notes(notebook, search_text) 
+    output = search_notes(search_text, notebook) 
     for index,filename in enumerate(output):
         if filename:
             print "[{0}]: {1}".format(index, filename)
@@ -105,8 +105,12 @@ def template_init(note_type, notebook, text):
     last = len('\n'.split(file_text)) + 1
     return (filename, last, summary)
 
-def search_notes(notebook,search_text):
-    output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), settings.NOTE_HOME])
+def search_notes(search_text,notebook=None):
+    if notebook:
+        note_path = os.path.join(settings.NOTE_HOME, notebook)
+    else:
+        note_path = settings.NOTE_HOME
+    output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
     outarray = output.split('\n')
     return outarray
 
