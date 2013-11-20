@@ -6,6 +6,7 @@ import settings
 import tempfile, subprocess
 from string import Template
 
+# Creates a dict to map the note type to it's template.  This lets me use a different template for a regular note, vs a Journal entry.
 template_map = {
         'note': settings.NOTE_TEMPLATE,
         'journal': settings.JOURNAL_TEMPLATE
@@ -23,19 +24,28 @@ def new_note(notetype, notebook, text):
     print summary
 
 def list_notes_matching(notebook,search_text):
+    """ Given a notebook, and a text string to search for, lists the notes that contain the search string.
+        Without a notebook, it searches recursively from NOTE_HOME.
+        Without text, it just lists the contents of the given (or default) notebook.
+        Uses grep & ls to perform these actions.
+    """
     output = search_notes(search_text, notebook) 
     for index,filename in enumerate(output):
         if filename:
             print "[{0}]: {1}".format(index, filename)
-    to_open = int(raw_input("Enter the number of the file to open: "))
-    open_file(output[to_open])
+    to_open = raw_input("Enter the number of the file to open (c to cancel): ")
+    if to_open != 'c':
+        open_file(output[int(to_open)]) 
 
 def getOutput(command):
-        p1 = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE)
-        output = p1.communicate()[0]
-        return output
+    """ Returns the output of a shell command. """
+    #TODO: Should be able to get rid of this using 'check_output' instead of Popen and communicate..
+    p1 = subprocess.Popen([command], shell=True, stdout=subprocess.PIPE)
+    output = p1.communicate()[0]
+    return output
 
 def get_filename_for_title(topic, notes_dir=None):
+    """ Converts the text argument into a filesystem safe name and path. """
     if notes_dir:
         note_path = os.path.join(settings.NOTE_HOME, notes_dir)
     else:
@@ -52,7 +62,6 @@ def get_filename_for_title(topic, notes_dir=None):
 
 def string_to_file_name(text, ext=settings.NOTE_EXT):
     new_name = text.replace(' ', '-').replace('/', '-')
-    # if not (new_name.endswith('.txt') or new_name.endswith('.pdf')):
     if not new_name.endswith(ext):
         new_name = '%s%s' % (new_name, ext)
     return new_name

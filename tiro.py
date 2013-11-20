@@ -3,7 +3,7 @@
 
 Usage: 
     tiro journal [--notebook=<notebook>] [--editor=<editor>] [<text> ...]
-    tiro list [--max=<max>] [--notebook=<notebook>] [--files] [<text> ...]
+    tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro log <log> <comment> ...
     tiro note [--notebook=<notebook>] [--editor=<editor>] [<text> ...]  
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
@@ -12,13 +12,13 @@ Usage:
 Options:
     -e --editor=<editor>      Open files with the specified editor. [default: vim]
     -h --help                 Show this help.
-    -n --notebook=<notebook>  Specify a specific notebook. [default: inbox]
+    -n --notebook=<notebook>  Specify a specific notebook. 
     --max=<max>               Maximum results to display. [default: 10]
     --version                 Show version.
 
 Command descriptions:
     journal - open a new or existing file named journal.<today>.txt
-    list - list files matching keywords
+    search - list files matching keywords
     log - add a line with the current date and time to a file.
     note - create a new note and then open it - <text> becomes filename
     open - open an existing note that matches <text>
@@ -38,8 +38,9 @@ args = docopt(__doc__, version='1.0')
 
 def journal(args):
     print(args)
+    cicero.new_note('journal',args['--notebook'],args['<text>'])
 
-def list(args):
+def search(args):
     print(args)
     cicero.list_notes_matching(args['--notebook'],args['<text>'])
 
@@ -48,8 +49,7 @@ def log(args):
 
 def note(args):
     print(args)
-    type = 'note'
-    cicero.new_note(type,args['--notebook'],args['<text>'])
+    cicero.new_note('note',args['--notebook'],args['<text>'])
 
 def open(args):
     print(args)
