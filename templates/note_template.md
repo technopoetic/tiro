@@ -1,2 +1,2 @@
 # $title
-:date: $today
+<!-- date: $today -->

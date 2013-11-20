@@ -1,4 +1,3 @@
-:date: $today
 # Weekly Report
 ## Hours
 * Mon:
@@ -20,3 +19,4 @@
 ## DDJ:
 * DDJTask
 
+<!-- date: $today -->
