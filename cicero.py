@@ -30,12 +30,17 @@ def list_notes_matching(notebook,search_text):
         Uses grep & ls to perform these actions.
     """
     output = search_notes(search_text, notebook) 
-    for index,filename in enumerate(output):
-        if filename:
-            print "[{0}]: {1}".format(index, filename)
-    to_open = raw_input("Enter the number of the file to open (c to cancel): ")
-    if to_open != 'c':
-        open_file(output[int(to_open)]) 
+    print type(output)
+    if type(output) == list:
+        for index,filename in enumerate(output):
+            if filename:
+                print "[{0}]: {1}".format(index, filename)
+        to_open = raw_input("Enter the number of the file to open (c to cancel): ")
+        if to_open != 'c':
+            open_file(output[int(to_open)]) 
+    else:
+        print "No files found that match the query string: {0}".format(search_text[0])
+        os._exit(1)
 
 def getOutput(command):
     """ Returns the output of a shell command. """
@@ -117,9 +122,17 @@ def search_notes(search_text,notebook=None):
     else:
         note_path = settings.NOTE_HOME
     if search_text:
-        output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
+        try:
+            output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
+            outarray = output.split('\n')
+            return outarray
+        except subprocess.CalledProcessError, e:
+            return e
     else:
-        output = subprocess.check_output(["ls", note_path])
-    outarray = output.split('\n')
-    return outarray
+        try:
+            output = subprocess.check_output(["ls", note_path])
+            outarray = output.split('\n')
+            return outarray
+        except subprocess.CalledProcessError, e:
+            return e
 
