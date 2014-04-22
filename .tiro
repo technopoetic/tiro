@@ -1,12 +1,17 @@
-[notes]
-home = Dropbox/Notes
-
 [compose]
+home = Dropbox/Notes
 note_template = note_template.md
+spec_template = spec_template.md
 journal_template = journal_template.md
+journal_title_pattern = Journal <date>
+journal_def_dir = %(home)s/WorkJournal
 extension = .md
 editor = vim 
 
 [date]
 format = %Y-%m-%d
+journal_day = friday
+
+[devel]
+debug = 1
 

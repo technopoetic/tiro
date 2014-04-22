@@ -3,6 +3,7 @@
 
 Usage: 
     tiro journal [--notebook=<notebook>] [--editor=<editor>] [<text> ...]
+    tiro spec [--notebook=<notebook>] [--editor=<editor>] [<text> ...]
     tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro log <log> <comment> ...
     tiro note [--notebook=<notebook>] [--editor=<editor>] [<text> ...]  
@@ -17,10 +18,11 @@ Options:
     --version                 Show version.
 
 Command descriptions:
-    journal - open a new or existing file named journal.<today>.txt
     search - list files matching keywords
     log - add a line with the current date and time to a file.
     note - create a new note and then open it - <text> becomes filename
+    journal - create a new journal and then open it - <text> becomes filename
+    spec - create a new spec and then open it - <text> becomes filename
     open - open an existing note that matches <text>
     summary - list all folders and the item counts in those folders
 
@@ -36,20 +38,20 @@ import settings
 from docopt import docopt
 args = docopt(__doc__, version='1.0')
 
+def note(args):
+    cicero.new_note('note',args['--notebook'],args['<text>'])
+
 def journal(args):
-    print(args)
     cicero.new_note('journal',args['--notebook'],args['<text>'])
 
+def spec(args):
+    cicero.new_note('spec',args['--notebook'],args['<text>'])
+
 def search(args):
-    print(args)
     cicero.list_notes_matching(args['--notebook'],args['<text>'])
 
 def log(args):
     print(args)
-
-def note(args):
-    print(args)
-    cicero.new_note('note',args['--notebook'],args['<text>'])
 
 def open(args):
     print(args)
@@ -64,9 +66,7 @@ if __name__ == '__main__':
 #      Note that this only avails those methods whose name matches a
 #      documented arg.
     for method in dir():
-        argname = method.replace('minion_', '')
-        if (argname in args) and args[argname]:
-            print "ARGNAME: " + argname
+        if (method in args) and args[method]:
             if hasattr(locals()[method], '__call__'):
                 locals()[method](args)
 
