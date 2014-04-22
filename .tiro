@@ -13,5 +13,5 @@ format = %Y-%m-%d
 journal_day = friday
 
 [devel]
-debug = 1
+debug = 0
 

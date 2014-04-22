@@ -14,7 +14,7 @@ template_map = {
         }
 
 def new_note(notetype, notebook, text):
-    """ Build and open a new note in the specified (or default) notebook. """
+    """ Build and open a new note or journal in the specified (or default) notebook. """
     if settings.DEBUG:
         print "Note home is: " + settings.NOTE_HOME
         print "Note template is: " + settings.NOTE_TEMPLATE
@@ -63,11 +63,16 @@ def getOutput(command):
     return output
 
 def get_filename_for_title(topic, note_type, notes_dir=None ):
-    """ Converts the text argument into a filesystem safe name and path. """
+    """ Converts the text argument into a filesystem safe name and path. 
+        For Journal entries, it also checks to see if there's a default journal directory defined.  Also for journal entries, if the text argument is empty, then it creates a new Journal title based on the date."""
     if notes_dir:
         note_path = os.path.join(settings.NOTE_HOME, notes_dir)
-    elif note_type == 'journal' and settings.JOURNAL_DIR is not None:
-        note_path = os.path.join(settings.JOURNAL_DIR)
+    elif note_type == 'journal':
+        try:
+            note_path = os.path.join(settings.JOURNAL_DIR)
+        except AttributeError:
+            print "No Default Journal Directory defined"
+            note_path = settings.NOTE_HOME
     else:
         note_path = settings.NOTE_HOME
     if not os.path.exists(note_path):
@@ -81,6 +86,7 @@ def get_filename_for_title(topic, note_type, notes_dir=None ):
 
 
 def string_to_file_name(text, ext=settings.NOTE_EXT):
+    """ Strips trailing & leading whitespace, replaces slashes and spaces with dashes."""
     text = text.strip()
     new_name = text.replace(' ', '-').replace('/', '-')
     if not new_name.endswith(ext):
@@ -96,6 +102,7 @@ def open_file(filename,
     subprocess.call([program, filename, "+%d" % (line + 2)])
 
 def get_title(text, note_type):
+    """ Builds a title from the text argument.  If the text arg is missing for a note, then it prompts for a title, for a Journal, it generates a title."""
     title = ' '.join(text)
     if len(title) == 0 and note_type == 'note':
         print getOutput('cal')
@@ -105,6 +112,8 @@ def get_title(text, note_type):
     return title
 
 def make_journal_title():
+    """ My journal is weekly.  There's a config option 'journal_day' that lets me set the day of the week that my journal is based on.  So, if I don't pass in a specific title, it will just create a new journal titled 'Journal-date-of-next-journal-day.md'. """
+    #TODO: Make the generated journal title a configurable pattern
     daymap = {
             'monday':0,
             'tuesday':1,
@@ -116,13 +125,18 @@ def make_journal_title():
             }
     today = datetime.date.today()
     journal_day = today + datetime.timedelta( (daymap[settings.JOURNAL_DAY.lower()]-today.weekday()) % 7 )
-    return 'Journal %s ' % journal_day;
+    return 'Journal {0}'.format(journal_day);
     
 def get_template_text(note_type):
-    f = open(template_map[note_type], 'r')
-    template_text = f.readlines()
-    f.close()
-    template_text = ''.join(template_text)
+    """ Reads the text of the template. """
+    try:
+        f = open(template_map[note_type], 'r')
+        template_text = f.readlines()
+        f.close()
+        template_text = ''.join(template_text)
+    except IOError:
+        print "Can't open template file: {0}".format(template_map[note_type])
+        template_text = ''
     return template_text
 
 def template_init(note_type, notebook, filename, title):
