@@ -43,14 +43,14 @@ def list_notes_matching(notebook,search_text):
         Without text, it just lists the contents of the given (or default) notebook.
         Uses grep & ls to perform these actions.
     """
-    output = search_notes(search_text, notebook) 
+    output = search_notes(search_text, notebook)
     if type(output) == list:
         for index,filename in enumerate(output):
             if filename and os.path.isfile(filename):
                 print "[{0}]: {1}".format(index, filename)
         to_open = raw_input("Enter the number of the file to open (c to cancel): ")
         if to_open != 'c':
-            open_file(output[int(to_open)]) 
+            open_file(output[int(to_open)])
     else:
         print "No files found that match the query string: {0}".format(search_text[0])
         os._exit(1)
@@ -63,7 +63,7 @@ def getOutput(command):
     return output
 
 def get_filename_for_title(topic, note_type, notes_dir=None ):
-    """ Converts the text argument into a filesystem safe name and path. 
+    """ Converts the text argument into a filesystem safe name and path.
         For Journal entries, it also checks to see if there's a default journal directory defined.  Also for journal entries, if the text argument is empty, then it creates a new Journal title based on the date."""
     if notes_dir:
         note_path = os.path.join(settings.NOTE_HOME, notes_dir)
@@ -93,13 +93,14 @@ def string_to_file_name(text, ext=settings.NOTE_EXT):
         new_name = '%s%s' % (new_name, ext)
     return new_name
 
-def open_file(filename, 
-        line=0, 
-        multiple = False, 
+def open_file(filename,
+        line=0,
+        multiple = False,
         graphical = False):
     print "Opening %s" % filename
-    program = 'vim'
-    subprocess.call([program, filename, "+%d" % (line + 2)])
+    #program = 'vim'
+    subprocess.call([settings.EDITOR, filename] )
+    # subprocess.call(['sublime', filename])
 
 def get_title(text, note_type):
     """ Builds a title from the text argument.  If the text arg is missing for a note, then it prompts for a title, for a Journal, it generates a title."""
@@ -126,7 +127,7 @@ def make_journal_title():
     today = datetime.date.today()
     journal_day = today + datetime.timedelta( (daymap[settings.JOURNAL_DAY.lower()]-today.weekday()) % 7 )
     return 'Journal {0}'.format(journal_day);
-    
+
 def get_template_text(note_type):
     """ Reads the text of the template. """
     try:
@@ -148,7 +149,7 @@ def template_init(note_type, notebook, filename, title):
 
     data = {}
     data['title'] =  title
-    data['filename'] = filename 
+    data['filename'] = filename
     data['today'] = today
 
     t = Template(template_text)
@@ -180,4 +181,3 @@ def search_notes(search_text,notebook=None):
             return outarray
         except subprocess.CalledProcessError, e:
             return e
-

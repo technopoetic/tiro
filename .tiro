@@ -6,7 +6,7 @@ journal_template = journal_template.md
 journal_title_pattern = Journal <date>
 journal_def_dir = %(home)s/WorkJournal
 extension = .md
-editor = vim 
+editor = atom 
 
 [date]
 format = %Y-%m-%d
@@ -14,4 +14,3 @@ journal_day = friday
 
 [devel]
 debug = 0
-
