@@ -5,6 +5,8 @@ import datetime
 import settings
 import tempfile, subprocess
 from string import Template
+from os import listdir
+from os.path import isfile, join
 
 # Creates a dict to map the note type to it's template.  This lets me use a different template for a regular note, vs a Journal entry.
 template_map = {
@@ -98,18 +100,17 @@ def open_file(filename,
         multiple = False,
         graphical = False):
     print "Opening %s" % filename
-    #program = 'vim'
     subprocess.call([settings.EDITOR, filename] )
-    # subprocess.call(['sublime', filename])
+    return
 
 def get_title(text, note_type):
     """ Builds a title from the text argument.  If the text arg is missing for a note, then it prompts for a title, for a Journal, it generates a title."""
     title = ' '.join(text)
-    if len(title) == 0 and note_type == 'note':
+    if len(title) == 0 and note_type == 'journal':
+        title = make_journal_title()
+    elif len(title) == 0:
         print getOutput('cal')
         title = raw_input("Note Title? ")
-    elif len(title) == 0 and note_type == 'journal':
-        title = make_journal_title()
     return title
 
 def make_journal_title():
@@ -129,15 +130,22 @@ def make_journal_title():
     return 'Journal {0}'.format(journal_day);
 
 def get_template_text(note_type):
-    """ Reads the text of the template. """
-    try:
-        f = open(template_map[note_type], 'r')
-        template_text = f.readlines()
-        f.close()
-        template_text = ''.join(template_text)
-    except IOError:
-        print "Can't open template file: {0}".format(template_map[note_type])
-        template_text = ''
+    #See if we have a template that matches
+    template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'templates')
+    onlyfiles = [f for f in listdir(template_path) if isfile(join(template_path, f))]
+    template_match = [t for t in onlyfiles if t.split('_',1)[0] == note_type]
+    template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'templates',template_match[0])
+    template_text = ''
+    if template_path != None:
+        """ Reads the text of the template. """
+        try:
+            f = open(template_path, 'r')
+            template_text = f.readlines()
+            f.close()
+            template_text = ''.join(template_text)
+        except IOError:
+            print "Can't open template file: {0}".format(template_path)
+            template_text = ''
     return template_text
 
 def template_init(note_type, notebook, filename, title):
