@@ -4,9 +4,9 @@ note_template = note_template.md
 spec_template = spec_template.md
 journal_template = journal_template.md
 journal_title_pattern = Journal <date>
-journal_def_dir = %(home)s/WorkJournal
+journal_def_dir = %(home)s/Journal
 extension = .md
-editor = atom 
+editor = vim
 
 [date]
 format = %Y-%m-%d

@@ -5,6 +5,7 @@ import os
 # Convert config file settings into CONSTANTS
 home = os.path.expanduser('~')
 Config = ConfigParser.ConfigParser()
+#TODO: Create a default set of configs.  If the file isn't there, then errors are thrown.
 Config.read(os.path.join(home,".tiro"))
 
 NOTE_HOME = os.path.join(home,Config.get("compose", "home"))
