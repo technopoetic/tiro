@@ -1,5 +1,6 @@
 [compose]
 home = Dropbox/Notes
+logfile = log.log
 note_template = note_template.md
 spec_template = spec_template.md
 journal_template = journal_template.md

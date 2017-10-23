@@ -39,6 +39,16 @@ def new_note(notetype, notebook, text):
         open_file(filename, last)
         print summary
 
+def log(message):
+    if settings.DEBUG:
+        print "Note home is: " + settings.NOTE_HOME
+        print "Log file is: " + settings.LOG_FILE
+        print "Note template is: " + settings.NOTE_TEMPLATE
+        print "Journal template is: " + settings.JOURNAL_TEMPLATE
+        print "Text args are: " + ' '.join(message)
+    with open(settings.LOG_FILE, "a+") as myfile:
+        myfile.write("{0}: {1}\n".format(datetime.datetime.now()," ".join(message)))
+
 def list_notes_matching(notebook,search_text):
     """ Given a notebook, and a text string to search for, lists the notes that contain the search string.
         Without a notebook, it searches recursively from NOTE_HOME.
@@ -66,7 +76,8 @@ def getOutput(command):
 
 def get_filename_for_title(topic, note_type, notes_dir=None ):
     """ Converts the text argument into a filesystem safe name and path.
-        For Journal entries, it also checks to see if there's a default journal directory defined.  Also for journal entries, if the text argument is empty, then it creates a new Journal title based on the date."""
+        For Journal entries, it also checks to see if there's a default journal directory defined.
+        Also for journal entries, if the text argument is empty, then it creates a new Journal title based on the date."""
     if notes_dir:
         note_path = os.path.join(settings.NOTE_HOME, notes_dir)
     elif note_type == 'journal':
@@ -114,7 +125,8 @@ def get_title(text, note_type):
     return title
 
 def make_journal_title():
-    """ My journal is weekly.  There's a config option 'journal_day' that lets me set the day of the week that my journal is based on.  So, if I don't pass in a specific title, it will just create a new journal titled 'Journal-date-of-next-journal-day.md'. """
+    """ My journal is weekly.  There's a config option 'journal_day' that lets me set the day of the week that my journal is based on.
+    So, if I don't pass in a specific title, it will just create a new journal titled 'Journal-date-of-next-journal-day.md'. """
     #TODO: Make the generated journal title a configurable pattern
     daymap = {
             'monday':0,

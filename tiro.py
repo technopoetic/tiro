@@ -15,11 +15,11 @@ Options:
 
 Command descriptions:
     search - list files matching keywords
-    log - add a line with the current date and time to a file.
+    log - append <text> with the current date and time to a file
     note - create a new note and then open it - <text> becomes filename
     journal - create a new journal and then open it - <text> becomes filename
     open - open an existing note that matches <text>
-    summary - list all folders and the item counts in those folders
+    summary - list all notebooks and the note counts in each
 
 """
 import os
@@ -49,7 +49,7 @@ def search(args):
     cicero.list_notes_matching(args['--notebook'],args['<text>'])
 
 def log(args):
-    print(args)
+    cicero.log(args['<text>'])
 
 def open(args):
     print(args)
