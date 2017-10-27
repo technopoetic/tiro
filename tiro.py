@@ -2,13 +2,15 @@
 """Creates and manages markdown, file based note system.
 
 Usage: 
-    tiro <note-type> [--notebook=<notebook>] [--editor=<editor>] [<text> ...]  
+    tiro note -t <note-type> [-n <notebook>] [--editor=<editor>] [<text> ...]  
+    tiro log <text>
     tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
     tiro summary [--max=<max>] 
 
 Options:
     -h --help                 Show this help.
+    -t --type=<note-type>     Specify note type
     -n --notebook=<notebook>  Specify a specific notebook. 
     --max=<max>               Maximum results to display. [default: 10]
     --version                 Show version.
@@ -17,7 +19,6 @@ Command descriptions:
     search - list files matching keywords
     log - append <text> with the current date and time to a file
     note - create a new note and then open it - <text> becomes filename
-    journal - create a new journal and then open it - <text> becomes filename
     open - open an existing note that matches <text>
     summary - list all notebooks and the note counts in each
 
@@ -37,7 +38,7 @@ args = docopt(__doc__, version='1.0')
 #    cicero.new_note('note',args['--notebook'],args['<text>'])
 
 def gen_note(args):
-    cicero.new_note(args['<note-type>'],args['--notebook'],args['<text>'])
+    cicero.new_note(args['--type'],args['--notebook'],args['<text>'])
 
 def journal(args):
     cicero.new_note('journal',args['--notebook'],args['<text>'])
@@ -51,7 +52,7 @@ def search(args):
 def log(args):
     cicero.log(args['<text>'])
 
-def open(args):
+def tiro_open(args):
     print(args)
 
 def summary(args):
@@ -59,25 +60,16 @@ def summary(args):
 
 # Run all the things!!!!
 if __name__ == '__main__':
-# Run any method named in the keyword args.
-# Cool hack: use DocOpt args to call methods in this file.
-#      Note that this only avails those methods whose name matches a
-#      documented arg.
-#    for method in dir():
-    # Specials like 'search' and 'log' will get caught here
-#        if (method in args) and args[method]:
-#            if hasattr(locals()[method], '__call__'):
-#                locals()[method](args)
-#                sys.exit(0)
-
-    if args['<note-type>'] == 'search':
+    if args.get('search',False):
         search(args)
-    elif args['<note-type>'] == 'log':
+    elif args.get('log',False):
         log(args)
-    elif args['<note-type>'] == 'open':
-        open(args)
-    elif args['<note-type>'] == 'summary':
+    elif args.get('open',False):
+        tiro_open(args)
+    elif args.get('summary',False):
         summary(args)
+    elif args.get('note',False):
+        gen_note(args)
     else:
         gen_note(args)
 

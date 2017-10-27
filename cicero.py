@@ -188,6 +188,7 @@ def search_notes(search_text,notebook=None):
     else:
         note_path = settings.NOTE_HOME
     if search_text:
+        print search_text
         try:
             output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
             outarray = output.split('\n')
