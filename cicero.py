@@ -2,7 +2,9 @@
 import os
 import shutil
 import datetime
+import re
 import settings
+import sys
 import tempfile, subprocess
 from string import Template
 from os import listdir
@@ -47,8 +49,18 @@ def log(message):
         print "Journal template is: " + settings.JOURNAL_TEMPLATE
         print "Text args are: " + ' '.join(message)
     with open(settings.LOG_FILE, "a+") as myfile:
-        myfile.write("{0}: {1}\n".format(datetime.datetime.now()," ".join(message)))
+        myfile.write("{0}: {1}\n".format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')," ".join(message)))
 
+def cat(start):
+    cat_lines = []
+    with open(settings.LOG_FILE, "r") as myfile:
+        for line in myfile.xreadlines():
+            prog = re.compile(start)
+            if prog.match(line) is not None:
+                cat_lines.append(line)
+    for line in cat_lines:
+        sys.stdout.write(line)
+    
 def list_notes_matching(notebook,search_text):
     """ Given a notebook, and a text string to search for, lists the notes that contain the search string.
         Without a notebook, it searches recursively from NOTE_HOME.
@@ -188,7 +200,6 @@ def search_notes(search_text,notebook=None):
     else:
         note_path = settings.NOTE_HOME
     if search_text:
-        print search_text
         try:
             output = subprocess.check_output(["grep", "-R","-i", "-l", ' '.join(search_text), note_path])
             outarray = output.split('\n')

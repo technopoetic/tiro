@@ -4,6 +4,7 @@
 Usage: 
     tiro note -t <note-type> [-n <notebook>] [--editor=<editor>] [<text> ...]  
     tiro log <text>
+    tiro cat -s <start> -n <display-num>
     tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
     tiro summary [--max=<max>] 
@@ -52,6 +53,11 @@ def search(args):
 def log(args):
     cicero.log(args['<text>'])
 
+def cat(args):
+    today = datetime.datetime.today().strftime('%Y-%m-%d')
+    start = args.get('<start>', today)
+    cicero.cat(start)
+
 def tiro_open(args):
     print(args)
 
@@ -64,6 +70,8 @@ if __name__ == '__main__':
         search(args)
     elif args.get('log',False):
         log(args)
+    elif args.get('cat',False):
+        cat(args)
     elif args.get('open',False):
         tiro_open(args)
     elif args.get('summary',False):
