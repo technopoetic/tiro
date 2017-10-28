@@ -3,8 +3,8 @@
 
 Usage: 
     tiro note -t <note-type> [-n <notebook>] [--editor=<editor>] [<text> ...]  
-    tiro log <text>
-    tiro cat -s <start> -n <display-num>
+    tiro log <text> ...
+    tiro cat [-s <start>] [-n <display-num>]
     tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
     tiro summary [--max=<max>] 
@@ -55,7 +55,9 @@ def log(args):
 
 def cat(args):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
-    start = args.get('<start>', today)
+    start = args.get("<start>") or today
+    print today
+    print start
     cicero.cat(start)
 
 def tiro_open(args):
