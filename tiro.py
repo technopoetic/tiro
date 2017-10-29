@@ -2,9 +2,9 @@
 """Creates and manages markdown, file based note system.
 
 Usage: 
-    tiro note -t <note-type> [-n <notebook>] [--editor=<editor>] [<text> ...]  
+    tiro note [-t <note-type>] [-n <notebook>] [--editor=<editor>] [<text> ...]  
     tiro log <text> ...
-    tiro cat [-s <start>] [-n <display-num>]
+    tiro cat [-s <start>] [--all]
     tiro search [--max=<max>] [--notebook=<notebook>] [<text> ...]
     tiro open [--editor=<editor>] [--max=<max>] <text> ...
     tiro summary [--max=<max>] 
@@ -28,7 +28,7 @@ import os
 import shutil
 import datetime
 import sys
-import cicero
+from cicero import cicero
 import settings
 
 # DocOpt is awesome. https://github.com/docopt/docopt
@@ -56,7 +56,8 @@ def log(args):
 def cat(args):
     today = datetime.datetime.today().strftime('%Y-%m-%d')
     start = args.get("<start>") or today
-    cicero.cat(start)
+    display_all = args.get("--all")
+    cicero.cat(start, display_all)
 
 def tiro_open(args):
     print(args)
