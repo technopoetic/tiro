@@ -10,24 +10,16 @@ from string import Template
 from os import listdir
 from os.path import isfile, join
 
-# Creates a dict to map the note type to it's template.  This lets me use a different template for a regular note, vs a Journal entry.
-template_map = {
-        'note': settings.NOTE_TEMPLATE,
-        'journal': settings.JOURNAL_TEMPLATE,
-        'spec': settings.SPEC_TEMPLATE
-        }
-
 def new_note(notetype, notebook, text):
     """ Build and open a new note or journal in the specified (or default) notebook. """
     if settings.DEBUG:
         print "Note home is: " + settings.NOTE_HOME
-        print "Note template is: " + settings.NOTE_TEMPLATE
-        print "Journal template is: " + settings.JOURNAL_TEMPLATE
         print "Text args are: " + ' '.join(text)
         print "Notebook is:  {0}".format(notebook)
         print "Note Type is:  {0}".format(notetype)
     title = get_title(text, notetype)
     filename = get_filename_for_title(title, notetype, notebook )
+
     if os.path.isfile(filename):
         exist_action = raw_input("Tiro found an already existing file.  Type o to open the existing file, or n to open a new one.")
         if exist_action == 'o':
@@ -51,12 +43,15 @@ def log(message):
     with open(settings.LOG_FILE, "a+") as myfile:
         myfile.write("{0}: {1}\n".format(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')," ".join(message)))
 
-def cat(start):
+def cat(start, display_all):
     cat_lines = []
     with open(settings.LOG_FILE, "r") as myfile:
         for line in myfile.xreadlines():
-            prog = re.compile(start)
-            if prog.match(line) is not None:
+            if display_all is False:
+                prog = re.compile(start)
+                if prog.match(line) is not None:
+                    cat_lines.append(line)
+            else: 
                 cat_lines.append(line)
     for line in cat_lines:
         sys.stdout.write(line)
@@ -154,11 +149,25 @@ def make_journal_title():
     return 'Journal {0}'.format(journal_day);
 
 def get_template_text(note_type):
+    if note_type is None:
+        if settings.DEFAULT_NOTE_TYPE is None:
+            return None
+        else:
+            note_type = settings.DEFAULT_NOTE_TYPE
+
     #See if we have a template that matches
-    template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'templates')
+    template_path = os.path.join(os.path.realpath(settings.NOTE_HOME),'.templates')
+
+    if os.path.isdir(template_path) is False:
+        error("ERROR: Could not load template directory: {}".format(template_path))
+
     onlyfiles = [f for f in listdir(template_path) if isfile(join(template_path, f))]
     template_match = [t for t in onlyfiles if t.split('_',1)[0] == note_type]
-    template_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),'templates',template_match[0])
+    if not template_match or (os.path.isfile(template_match[0]) is False):
+        error("ERROR: No template found for note type: {}".format(note_type))
+
+    template_path = os.path.join(os.path.realpath(settings.NOTE_HOME),'.templates',template_match[0])
+
     template_text = ''
     if template_path != None:
         """ Reads the text of the template. """
@@ -178,6 +187,8 @@ def template_init(note_type, notebook, filename, title):
     today = datetime.date.today()
     today = today.strftime(settings.DATE_FORMAT)
     summary = "{0}\nCreated {1}".format(title, today)
+    if template_text is None:
+        return (0, summary)
 
     data = {}
     data['title'] =  title
@@ -213,3 +224,7 @@ def search_notes(search_text,notebook=None):
             return outarray
         except subprocess.CalledProcessError, e:
             return e
+
+def error(message):
+    print message
+    exit()
