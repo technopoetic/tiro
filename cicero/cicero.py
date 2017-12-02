@@ -163,7 +163,7 @@ def get_template_text(note_type):
 
     onlyfiles = [f for f in listdir(template_path) if isfile(join(template_path, f))]
     template_match = [t for t in onlyfiles if t.split('_',1)[0] == note_type]
-    if not template_match or (os.path.isfile(template_match[0]) is False):
+    if not (template_match or (os.path.isfile(template_match[0]) is False)):
         error("ERROR: No template found for note type: {}".format(note_type))
 
     template_path = os.path.join(os.path.realpath(settings.NOTE_HOME),'.templates',template_match[0])
