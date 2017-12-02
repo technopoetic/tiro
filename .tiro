@@ -1,5 +1,5 @@
 [compose]
-home = ownCloud/Notes
+home = Dropbox/Notes
 logfile = log.txt
 default_note_type = note
 journal_title_pattern = Journal <date>
